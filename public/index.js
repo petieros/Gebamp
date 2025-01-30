@@ -929,7 +929,8 @@ function sendDates() {
                   </div>`;
               document.getElementById('dataAccordion').innerHTML += tableHtml;
             });
-     
+            mySend({text:"Sikeres szűrés!", tip:"success", mp:5});
+           
             $("#datumosadmin").css("display", "none");  
             $("#pdfszures").css("display", "block");        
         } else {
@@ -940,6 +941,8 @@ function sendDates() {
     } else {
       mySend({text:"Kérjük adjon meg minden dátumot!", tip:"danger", mp:5});
     }
+    setTimeout(() => {window.location.href = '/#dataAccordion';}, 100);
+  
     }
 
 function backbutton(){
@@ -1085,6 +1088,8 @@ function csv_hez_lista(){
               $("#general_mukodj").css("display", "none"); 
               $("#general_szurotabla").css("display", "block");
               document.getElementById('csvcuccnak').innerHTML = tableHtml;    
+             document.getElementById('start_date2').value = '';
+              document.getElementById('end_date2').value = '';
             }
         };
         } 
@@ -1093,7 +1098,7 @@ function csv_hez_lista(){
       else {
         mySend({text:"adja meg mindkét dátumot!", tip:"danger", mp:5});
       };
-      
+      setTimeout(() => {window.location.href = '/#csvcuccnak';}, 100);
     } 
 
     function csvgeneral(){

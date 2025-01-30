@@ -93,7 +93,7 @@ function search1_get()
     <button id="login1_modal_button" type="button" class="btn btn-outline-secondary bi bi-person-fill" title="katt: login (F8)"></button>
     
   </nav>
-
+ 
   <!--------------------------  T I T L E  --------------------------------------------->
   <section id="main_title" class="d-flex align-items-center">
 
@@ -104,8 +104,7 @@ function search1_get()
           <div class="d-flex justify-content-center justify-content-lg-start">
           </div>
         </div>
-        <div id="nembelepettkep"class="col-lg-6 order-1 order-lg-2 main_title-img">
-          <img src="images/main_title-img.png" class="img-fluid">
+        <div id="nembelepettkep"class="col-lg-6 order-1 order-lg-2 main_title-img">       
         </div>
       </div>
     </div>
@@ -160,6 +159,90 @@ function search1_get()
       </div>
     </div>
   </div>
+
+
+  <!-- Sidebar -->
+  <div id="mySidebar" class="sidebar" onmouseover="openNav()" onmouseout="closeNav()"></div>
+
+  <!-- Main content -->
+  <div id="main">
+     
+  </div>
+
+  <style>
+    .sidebar {
+      height: 100%;
+      width: 60px;
+      position: fixed;
+      top: 56px; /* Adjust based on the height of your navbar */
+      left: 0;
+      background-color: #111;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 10px;
+      opacity: 0.6;
+    }
+
+    .sidebar a {
+      padding: 10px 15px;
+      text-decoration: none;
+      font-size: 18px;
+      color: white;
+      display: block;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+      color: #f1f1f1;
+    }
+
+    .sidebar .closebtn {
+      position: absolute;
+      top: 0;
+      right: 25px;
+      font-size: 36px;
+      margin-left: 50px;
+    }
+
+    .openbtn {
+      font-size: 20px;
+      cursor: pointer;
+      background-color: #111;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+    }
+
+    .openbtn:hover {
+      background-color: #444;
+    }
+
+    #main {
+      transition: margin-left .5s;
+      padding: 16px;
+    }
+  </style>
+
+  <script>
+    function openNav() {
+      document.getElementById("mySidebar").style.width = "250px";
+      document.getElementById("main").style.marginLeft = "250px";
+    }
+
+    function closeNav() {
+      document.getElementById("mySidebar").style.width = "60px";
+      document.getElementById("main").style.marginLeft = "60px";
+    }
+  </script>
+
+
+
+
+
+
+
+
+  
   <!-- -------------------------- A D M I N  D I V  -------------------------------------- -->
   <div id="adminbigdiv">
     <button id="toggle_admin_button" class="btn btn-secondary mt-3">Gép Példány felvétele</button>
@@ -258,7 +341,7 @@ function search1_get()
 
 
   <!--------------------------------------- PDF generálás ----------------------------------------------------------->
-  <div id="admin_div5" class="container mt-5" style="display: none;">
+  <div id="admin_div5" class="container mt-5"style="display: none;">
     <h2>Pdf nyomtatás</h2>
     <form id="admin_form5"></form>
     <div class="mb-3"></div>
@@ -448,32 +531,7 @@ function search1_get()
       modal.hide();
     });
   </script>
-  <!-- -------------------------- S E A R C H  card  ----------------------------------- -->
-  <div class="card" id="search1_card">
-    <div class="card-body" id="search1_card_body">
-      This is some text within a card body.
-    </div>
-  </div>
-
-   <!-- -------------------------- M E N Ü  card  -------------------------------------- -->
-   <div class="card" id="menu1_card">
-    <div class="card-header"><h3>Menü</h3></div>
-    <div class="card-body">    
-    </div>
-    <div class="card-footer"><i>© Csány szoft. - 2024</i></div>
-  </div>
-
-  
-  <!-- ------------------------------  F O O T E R  ----------------------------------------- -->
-  <footer id="footer" class="container-fluid bg-dark">
-       <p>
-        | © <a href="https://www.csany-zeg.hu/" target="_blank">Csány László Technikum - 2024</a>
-        | <a href="https://bootstrapmade.com/demo/Arsha/" target="_blank">Arsha</a>  
-        | <a href="https://www.w3schools.com/bootstrap5/" target="_blank">Bootstrap w3</a>
-        | <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a>
-        |   
-      </p>
-  </footer>
+ 
 
   <div class="loader" id="loader1"><img src="images/ajaxloader3.gif" alt="loader"/></div>      <!-- ajax loader -->
 </body>
