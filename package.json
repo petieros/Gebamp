@@ -1,0 +1,25 @@
+{
+  "name": "gepberles",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "express": "^4.21.0",
+    "express-session": "^1.18.0",
+    "fs": "^0.0.1-security",
+    "jspdf": "^2.5.2",
+    "muhammara": "^5.2.0",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.11.2",
+    "pdfkit": "^0.15.1",
+    "puppeteer": "^23.10.1"
+  }
+}

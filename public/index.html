@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+
+  <title>SZ5-B</title>
+  <meta   charset="utf-8">
+  <meta   name="viewport" content="width=device-width, initial-scale=1">
+  <link   href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link   rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
+  
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" />
+  <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script> 
+  
+  <link   href="style.css" rel="stylesheet">
+  
+</head>
+<script type="text/javascript">
+    $(document).ready(function() { 
+    $("#login1_modal_button").click(function() { login_show();  });
+    $("#user1_logout_button").click(function() { logout()       });
+    $("#search1_field").keyup(function()       { search1_get()  });  
+    $("#menu1_button").click(function()        { $('#menu1_card').fadeToggle(300);   });
+    $("#search1_button").click(function()      { $('#search1_card').fadeToggle(300); });
+    $(document).keydown(function (e) {
+        if (e.keyCode === 113) {  $("#menu1_card").fadeToggle(300); }       // F2: menü
+        if (e.keyCode === 115) {  $("#search1_card").fadeToggle(300); }     // F4: search
+        if (e.keyCode === 119) {  login_show(); }                           // F8: login
+    });   
+    
+
+    $("li.xmenu").click(function () {
+        var id = $(this).attr("id");                            // pl: "menu1_5"  
+        var i = id.substring(6);                                // balról vág: pl: "5" 
+        var tip = menü_json[i].tip;
+        var url = menü_json[i].url;
+        if (tip == 0) { ajax_get( url, '#main1', 0, true);  }  // ajax html betöltése
+        if (tip == 1) {window.open(url, '').focus();  }         // teljes oldal    
+        if (tip == 2) {window.open(url, '_blank').focus();  }   // new tab 
+        $("#menu1_card").fadeToggle(300);  
+    });
+
+});
+
+/*  menü beállítása (jogosultságok), megjelenítése (forrás: glob. json asszoc. array) */
+function menu_get() 
+{
+   
+}
+
+/* ---------- login-logout modális ablak ---------  */ 
+function login_show() 
+{ 
+  $('#login1_modal').modal('show');
+}
+
+/* --- a gyorskereső mezőbe gépelt karakterre fut ... */
+function search1_get() 
+{
+  var text = $('#search1_field').val();
+  $('#search1_card_body').html(text);
+  $('#search1_card').css("display", text.length === 0? 'none' : 'block' );
+  if ( text.length > 2)   // ennél rövidebbet nem keres (kell ez?)
+  {
+    /* ide jön a gyorskereső backend, pl. min. 3 karakter esetén. minta: https://netkazan.hu */
+  } 
+}
+
+/* --- felhasználó bejelentkezik. Neve megjelenik az id=login1_user TAG-ben --- */ 
+
+  
+  
+
+
+
+/* ---- felhasználó kijelentkezik. Az id=login1_user TAG-ben "...senki ..." ---- */ 
+
+</script>
+
+
+
+<body>
+ 
+ <!-- -------------------------- F E J L É C  é s  M E N Ü ----------------------------------------- -->
+  <nav id="navbar" class="navbar navbar-expand-sm fixed-top">
+
+
+    <span id="login1_user" class="navbar-text" title="no login">Login: Még senki....</span>
+    <span id="navbarspan"></span>
+    <button id="login1_modal_button" type="button" class="btn btn-outline-secondary bi bi-person-fill" title="katt: login (F8)"></button>
+    
+  </nav>
+
+  <!--------------------------  T I T L E  --------------------------------------------->
+  <section id="main_title" class="d-flex align-items-center">
+
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6 d-flex flex-column justify-content-center pt-4 pt-lg-0 order-2 order-lg-1">
+          <h1>Gépbérlés</h1>
+          <div class="d-flex justify-content-center justify-content-lg-start">
+          </div>
+        </div>
+        <div id="nembelepettkep"class="col-lg-6 order-1 order-lg-2 main_title-img">
+          <img src="images/main_title-img.png" class="img-fluid">
+        </div>
+      </div>
+    </div>
+  </section> 
+
+  <!-- -------------------------- LOGIN és LOGOUT modális -------------------------------------- -->
+  <div class="modal fade" id="login1_modal" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" style="opacity: 0.9;">
+      <div class="modal-content">
+        <div class="modal-header bg-secondary text-white">
+          <h3 class="modal-title">Bejelentkezés</h3>
+          <button type="button" class="btn-close" onclick="vissza()" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="valasztott">
+            <div id="user1_login_button"  class="button login" onclick="valaszto('admin')">Admin</div>     
+            <div id="user1_login_buttonuser"  class="button login" onclick="valaszto('user')">User</div>
+        </div>
+          <div id="bejelablak">
+            <form id="user1_form">
+              <div class="mb-3" >
+                <label for="user1_login_field" class="form-label">Felhasználó / email cím:</label>
+                <input type="email"  oninput="this.value = this.value.replace(/[^A-Za-z0-9öéáőíúóüűÖÜeEÓÚŰŐÁÉÍ]/g, '');" class="form-control" id="user1_login_field" name="user1_login_field" placeholder="usernév" value="admin">
+              </div>
+              <div class="mb-3">
+                <label for="user1_passwd_field" class="form-label">Jelszó:</label>
+                <input type="password"  oninput="this.value = this.value.replace(/[^A-Za-z0-9öéáíőúóüűeEÖÜÓÚŰŐÁÉÍ]/g, '');" class="form-control" id="user1_passwd_field" name="user1_passwd_field" placeholder="Jelszó" value="admin">
+              </div>
+            </form>
+       
+     
+        <div class="modal-footer"> 
+           <div id="ekezetnelkul">
+            <div id="user1_login_buttonvissza"  class="button login" onclick="vissza()">Vissza</div> 
+            <div id="user1_login_button"  class="button login" onclick="felhasznaloclick(`${user1_login_field.value.toString()},${user1_passwd_field.value.toString()}`)">Login</div>
+          </div>
+          </div>
+        </div>
+        <div id="userbejel">
+            <div class="mb-3" >
+              <label for="user1_login_field" class="form-label">RFID:</label>
+              <input type="password"  oninput="this.value = this.value.replace(/[^A-Za-z0-9öíéáőúeEóüűÖÜÓÚŰŐÁÉÍ]/g, '');" onkeydown="if(event.key === 'e' || event.key === 'E' || event.key === '-' || event.key === '+') event.preventDefault();" class="form-control" id="user1_login_fieldOM" name="user1_login_field" placeholder="CSIPPANTS...." value="">
+            </div>
+            <div class="modal-footer"> 
+              <div id="ekezetnelkul">
+               <div id="user1_login_buttonvissza"  class="button login" onclick="vissza()">Vissza</div> 
+               <div id="user1_login_button"  class="button login" onclick="userbejelclick(`${user1_login_fieldOM.value.toString()}`)">Login</div>
+             </div>
+             </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+  <!-- -------------------------- A D M I N  D I V  -------------------------------------- -->
+  <div id="adminbigdiv">
+    <button id="toggle_admin_button" class="btn btn-secondary mt-3">Gép Példány felvétele</button>
+    <button id="toggle_admin_button2" class="btn btn-secondary mt-3">Gép Példány Szerkesztése</button>
+    <button id="toggle_admin_button3" class="btn btn-secondary mt-3">Gép Példány Törlése</button>
+    <button id="toggle_admin_button4" class="btn btn-secondary mt-3"  onclick="berlesadminfeltoltes()">Jelenleg bérelt gépek</button>
+    <button id="toggle_admin_button5" class="btn btn-secondary mt-3"  onclick="szures()">Diák intervallum szűrés</button>
+    <button id="toggle_admin_button6" class="btn btn-secondary mt-3">Oktatóterem és gépbérlés forgalmi kimutatások</button>
+
+
+<!--------------------------------------- Gép felvétele ----------------------------------------------------------->
+
+    <div id="admin_div" class="container mt-5" style="display: none;">
+      <h2>Felvétel</h2>
+      <form id="admin_form">
+        <div class="mb-3">
+            <label for="admin_field1" class="form-label">Név</label>
+          <input type="text" class="form-control" id="admin_field1" name="admin_field1" placeholder="....."oninput="this.value = this.value.replace(/[^A-Za-z0-9eöíéáőúóüűÖEÜÓÚŰŐÁÉÍ]/g, '');" onkeydown="if(event.key === 'e' || event.key === 'E' || event.key === '-' || event.key === '+') event.preventDefault();">
+        </div>
+        <div class="mb-3">
+          <label for="admin_field2" class="form-label">Leltári Azonosító</label>
+          <input type="text" class="form-control" id="admin_field2" name="admin_field2" placeholder="....."oninput="this.value = this.value.replace(/[^A-Za-z0-9eöíéáőúóüűEÖÜÓÚŰŐÁÉÍ]/g, '');" onkeydown="if(event.key === 'e' || event.key === 'E' || event.key === '-' || event.key === '+') event.preventDefault();">
+        </div>
+        <div class="mb-3">
+          <label for="admin_field3" class="form-label">Tereszám+Gépszám</label>
+          <input type="text" class="form-control" id="admin_field3" name="admin_field3" placeholder="....."oninput="this.value = this.value.replace(/[^A-Za-z0-9eöíéáőúóüűÖÜÓÚŰEŐÁÉÍ_]/g, '');" onkeydown="if(event.key === 'e' || event.key === 'E' || event.key === '-' || event.key === '+') event.preventDefault();">
+        </div>
+        <div class="mb-3"></div>
+          <label for="admin_dropdown" class="form-label">Válasszon kategóriát</label>
+          <select class="form-select" id="admin_dropdown" name="admin_dropdown">
+          </select>
+          <button type="button" class="btn btn-primary" onclick="gep_felvetel()">Felvétel</button>
+        </div>
+
+       
+      </form>
+      <div class="mt-4"></div>
+    </div>
+<!-------------------------------------------------------------------------------------------------->
+
+<!--------------------------------------- Gép szerkesztése ----------------------------------------------------------->
+    <div id="admin_div2" class="container mt-5" style="display: none;">
+      <h2>Szerkesztés</h2>
+      <form id="admin_form2">
+        <div class="mb-3"></div>
+          <label for="admin_dropdown1" class="form-label">Válasszon gépet</label>
+          <select class="form-select" id="admin_dropdown1" name="admin_dropdown1">
+          </select>
+        <div class="mb-3">
+          <label for="admin_field5" class="form-label">Név</label>
+          <input type="text" class="form-control" id="admin_field5" name="admin_field1" placeholder="...."oninput="this.value = this.value.replace(/[^A-Za-z0-9öíéáőeEúóüűÖÜÓÚŰŐÁÉÍ_]/g, '');" onkeydown="if(event.key === 'e' || event.key === 'E' || event.key === '-' || event.key === '+') event.preventDefault();">
+        </div>
+        <div class="mb-3">
+          <label for="admin_field6" class="form-label">Azonositó_1</label>
+          <input type="text" class="form-control" id="admin_field6" name="admin_field2" placeholder="...."oninput="this.value = this.value.replace(/[^A-Za-z0-9öíéáőeEúóüűÖÜÓÚŰŐÁÉÍ_]/g, '');" onkeydown="if(event.key === 'e' || event.key === 'E' || event.key === '-' || event.key === '+') event.preventDefault();">
+        </div>
+        <div class="mb-3">
+          <label for="admin_field7" class="form-label">Teremszám-Gépszám</label>
+          <input type="text" class="form-control" id="admin_field7" name="admin_field3" placeholder="...."oninput="this.value = this.value.replace(/[^A-Za-z0-9öíéáeEőúóüűÖÜÓÚŰŐÁÉÍ_]/g, '');" onkeydown="if(event.key === 'e' || event.key === 'E' || event.key === '-' || event.key === '+') event.preventDefault();">
+        </div>
+        <button type="button" class="btn btn-primary" onclick="gep_szerkesztes()">Szerkesztés</button>
+      </form>
+      <div class="mt-4"></div>
+    </div>
+    <!---------------------------------------------------------------------------------------------------------------->
+
+    <!--------------------------------------- Gép Törlése ----------------------------------------------------------->
+
+    <div id="admin_div3" class="container mt-5" style="display: none;">
+      <h2>Törlés</h2>
+      <form id="admin_form3">
+        <div class="mb-3">
+          <label for="admin_field4" class="form-label">Válasszon Gépet</label>
+          <select class="form-select" id="admin_field4" name="admin_field4">
+          </select>
+          <button type="button" class="btn btn-primary" onclick="gep_torles()">Törlés</button>
+        </div>
+      </div>
+<!--------------------------------------------------------------------------------------------------------------------------------->
+
+<!--------------------------------------- Jelenleg bérelt gépek ----------------------------------------------------------->
+        <div id="admin_div4" class="container mt-5" style="display: none;">
+            <h2>Jelenleg használt gépek</h2>
+            <form id="admin_form2"></form>
+            <div class="mb-3"></div>
+              <label for="admin_dropdown9" class="form-label">Válasszon gépeket</label>
+              <select class="form-select" id="admin_dropdown9" name="admin_dropdown1" multiple></select>
+              <button type="button" class="btn btn-primary" onclick="berelttorlesadmin()">Törlés</button>
+              <button type="button" class="btn btn-primary"id="admin_button7" onclick="admincsvperpill()">CSV Készítése</button>
+              </div>
+      </form>
+      <div class="mt-4"></div>
+    </div>
+  </div>
+<!-------------------------------------------------------------------------------------------------------------->
+
+
+  <!--------------------------------------- PDF generálás ----------------------------------------------------------->
+  <div id="admin_div5" class="container mt-5" style="display: none;">
+    <h2>Pdf nyomtatás</h2>
+    <form id="admin_form5"></form>
+    <div class="mb-3"></div>
+    <div id="datumosadmin">
+      <div class="mb-3">
+        <label for="start_date" class="form-label">Kezdő dátum</label>
+        <input type="datetime-local" class="form-control" id="start_date" name="start_date">
+      </div>
+      <div class="mb-3">
+        <label for="end_date" class="form-label">Befejező dátum és idő</label>
+        <input type="datetime-local" class="form-control" id="end_date" name="end_date" disabled>
+      </div>
+
+    <button type="button" id="kuldes_button" class="btn btn-primary" onclick="sendDates()">Küldés</button>
+    </div>
+    <div id="pdfszures" class="container mt-5" style="display: none;">
+      <input type="text" id="searchInputName" class="form-control mb-1" onkeyup="filterAccordionRows()" placeholder="Név">
+      <input type="text" id="searchInputGep" class="form-control mb-1" onkeyup="filterRows()" placeholder="Gép">
+      <input type="text" id="searchInputDate" class="form-control mb-1" onkeyup="filterRows()" placeholder="Kezdés">
+      <input type="text" id="searchInputEndDate" class="form-control mb-1" onkeyup="filterRows()" placeholder="Befejezés">
+      <button type="button" id="gombpdf" class="btn btn-primary" onclick="sendPDF()">PDF Generálás</button>
+      <button type="button" id="back_button" class="btn btn-primary" onclick="backbutton()">Vissza</button>
+      <div id="admin_pdf_table">
+        <div class="accordion" id="dataAccordion"></div>
+      </div>
+    </div>
+
+      
+   
+    
+
+      <script>
+        document.getElementById('start_date').addEventListener('change', function() {
+          const endDateInput = document.getElementById('end_date');
+          if (this.value) {
+            endDateInput.disabled = false;
+            endDateInput.min = this.value;
+          } else {
+            endDateInput.disabled = true;
+            endDateInput.min = '';
+          }
+        });
+
+        document.getElementById('end_date').addEventListener('change', function() {
+          const startDateInput = document.getElementById('start_date');
+          if (this.value < startDateInput.value) {
+            alert('A befejező dátum nem lehet kisebb, mint a kezdő dátum!');
+            this.value = '';
+          }
+        });
+      </script>
+
+      
+      </div>
+
+<!-------------------------------------------------------------------------------------------------------------->
+
+<!--------------------------------------- Csv-s rész ----------------------------------------------------------->
+
+      <div id="admin_div7" style="display: none;">
+        <h2>Diák intervallum szűrés</h2>
+        <form id="admin_form6"></form>
+        <div class="mb-3"></div>
+
+          <div id="general_mukodj" class="container mt-5 general">
+            <div class="mb-3">
+              <label for="start_date" class="form-label">Kezdő dátum</label>
+              <input type="datetime-local" class="form-control" id="start_date2" name="start_date">
+            </div>
+            <div class="mb-3">
+              <label for="end_date" class="form-label">Befejező dátum és idő</label>
+              <input type="datetime-local" class="form-control" id="end_date2" name="end_date" disabled>
+            </div>
+            <button type="button" id="kuldes_button" class="btn btn-primary" onclick="csv_hez_lista()">Listázzunk!</button>
+          </div>
+          
+          
+          <script>
+            document.getElementById('start_date2').addEventListener('change', function() {
+              const endDateInput = document.getElementById('end_date2');
+              if (this.value) {
+                endDateInput.disabled = false;
+                endDateInput.min = this.value;
+              } else {
+                endDateInput.disabled = true;
+                endDateInput.min = '';
+              }
+            });
+    
+            document.getElementById('end_date2').addEventListener('change', function() {
+              const startDateInput = document.getElementById('start_date2');
+              if (this.value < startDateInput.value) {
+                alert('A befejező dátum nem lehet kisebb, mint a kezdő dátum!');
+                this.value = '';
+              }
+            });
+          </script>
+          
+          
+      <div class="mb-3 container" id="general_szurotabla" class="general" style="display: none;">
+        <input type="text" id="searchInputName1" class="form-control mb-1" onkeyup="filterRows1()" placeholder="Név">
+        <input type="text" id="searchInputGep1" class="form-control mb-1" onkeyup="filterRows1()" placeholder="Gép">
+        <input type="text" id="searchInputDate1" class="form-control mb-1" onkeyup="filterRows1()" placeholder="Kezdés">
+        <input type="text" id="searchInputEndDate1" class="form-control mb-1" onkeyup="filterRows1()" placeholder="Befejezés">
+        <input type="text" id="searchInputTerem1" class="form-control mb-1" onkeyup="filterRows1()" placeholder="Teremszám">
+        <button type="button" id="admin_csv_report" class="btn btn-primary" onclick="csvgeneral()">CSV Generálás</button>
+          <button type="button" id="back" class="btn btn-primary" onclick="createBackButton()">Vissza</button>
+          <div id="csvcuccnak">
+
+          </div>
+      </div>
+</form>
+<div class="mt-4"></div>
+</div>
+<!---------------------------------------------------------------------------------------------------------------->
+</div>
+
+  <!-- -------------------------- USER DIV  ----------------------------------- -->
+  <div id="userbigdiv">
+    <button id="toggle_user_button" class="btn btn-secondary mt-3"onclick="kolcsonzesfeltoltes()">Gép Kölcsönzés</button>
+    <button id="toggle_user_button2" class="btn btn-secondary mt-3"onclick="kolcsonzestorles()">Gép Kölcsönzés befejezése</button>
+    <div id="user_div" class="container mt-5" style="display: none;">
+      <h2>Kölcsönzés</h2>
+    <!--  <form id="user_form">-->
+        <div class="mb-3">
+          <label for="user_field1" class="form-label">Válasszon gépet</label>
+          <select class="form-select" id="kolcsonzes_dropdown" name="user_field1">
+          </select>
+          <button id="gombocska" class = "btn" onclick="berlestart()">Gép Kölcsönzés</button>
+        </div>
+      </div>   
+        <div class="mb-3">
+        </div> 
+      
+    
+    <div id="user_div2" class="container mt-5" style="display: none;">
+      <h2>Kölcsönzés befejezése</h2>
+    <!--  <form id="user_form">-->
+        <div class="mb-3">
+          <label for="user_field1" class="form-label">Válasszon gépet</label>
+          <select class="form-select" id="kolcsonzes_dropdown2" name="user_field1">
+          </select>
+          <button id="gombosos" class = "btn">Gép Kölcsönzés befejezese</button>
+        </div>
+      </div>   
+        <div class="mb-3">
+        </div> 
+      </div> 
+
+
+      <!-- Modal Structure -->
+      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Modal Title</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <input type="text" id="modalInput" class="form-control" placeholder="Enter text here">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégse</button>
+              <button type="button" class="btn btn-primary" id="finishButton" onclick="berelesbefejezes()" disabled>Befejezés</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        document.getElementById('modalInput').addEventListener('input', function() {
+          const finishButton = document.getElementById('finishButton');
+          finishButton.disabled = this.value.trim() === '';
+        });
+      </script>
+  <script>
+    document.getElementById('gombosos').addEventListener('click', function() {
+      const selectElement = document.getElementById('kolcsonzes_dropdown2');
+      if (selectElement.value) {
+      const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
+      modal.show();
+      }
+    });
+
+    document.getElementById('finishButton').addEventListener('click', function() {
+      const modal = bootstrap.Modal.getInstance(document.getElementById('exampleModal'));
+      modal.hide();
+    });
+  </script>
+  <!-- -------------------------- S E A R C H  card  ----------------------------------- -->
+  <div class="card" id="search1_card">
+    <div class="card-body" id="search1_card_body">
+      This is some text within a card body.
+    </div>
+  </div>
+
+   <!-- -------------------------- M E N Ü  card  -------------------------------------- -->
+   <div class="card" id="menu1_card">
+    <div class="card-header"><h3>Menü</h3></div>
+    <div class="card-body">    
+    </div>
+    <div class="card-footer"><i>© Csány szoft. - 2024</i></div>
+  </div>
+
+  
+  <!-- ------------------------------  F O O T E R  ----------------------------------------- -->
+  <footer id="footer" class="container-fluid bg-dark">
+       <p>
+        | © <a href="https://www.csany-zeg.hu/" target="_blank">Csány László Technikum - 2024</a>
+        | <a href="https://bootstrapmade.com/demo/Arsha/" target="_blank">Arsha</a>  
+        | <a href="https://www.w3schools.com/bootstrap5/" target="_blank">Bootstrap w3</a>
+        | <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a>
+        |   
+      </p>
+  </footer>
+
+  <div class="loader" id="loader1"><img src="images/ajaxloader3.gif" alt="loader"/></div>      <!-- ajax loader -->
+</body>
+</html>
+
+
+<script src="index.js"></script>
